@@ -3,6 +3,7 @@ let BarcodeScanner = require("nativescript-barcodescanner").BarcodeScanner;
 let barcodescanner = new BarcodeScanner();
 const httpModule = require("tns-core-modules/http");
 const dialogs = require("tns-core-modules/ui/dialogs");
+let toasty = require("nativescript-toasty").Toasty;
 
 let viewModel;
 let page;
@@ -25,7 +26,7 @@ function scanQR() {
         cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
         message: "Scan QR code", // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
-        preferFrontCamera: true,     // Android only, default false
+        preferFrontCamera: false,     // Android only, default false
         showFlipCameraButton: false,   // default false
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
@@ -36,7 +37,6 @@ function scanQR() {
             //console.log("Scanner closed @ " + new Date().getTime());
         },
         continuousScanCallback: function (result) {
-            //count++;
             console.log(result.format + ": " + result.text + " (count: " + count + ")");
             barcodescanner.message = "SCANNED";
 
@@ -52,22 +52,18 @@ function scanQR() {
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
-                console.log(result);
+                console.log(response.statusCode);
 
-                let message;
-                if (response.statusCode === 500)
-                    message = "Error: " + result["errMsg"];
-                else
-                    message = result["status"];
-
-                    console.log("OK");
-                    // Inserire risposta nell'alert (Nome,Cognome,Email,Matr e Autorizzazione)
-                    dialogs.alert({
-                        title: "Result:",
-                        message: message,
-                        okButtonText: "OK"
-                    });
-
+                if(response.statusCode == 500){
+                    let toast = new toasty({"text": result.errMsg});
+                    toast.setBackgroundColor("#BB0000");
+                    toast.show();
+                }
+                else {
+                    let toast = new toasty({"text": result.status});
+                    toast.setBackgroundColor("#00BB00");
+                    toast.show();
+                }
 
             }, error => {
                 console.error(error);
@@ -79,12 +75,12 @@ function scanQR() {
             }
         },
     }).then(
-        function (result) {
-            console.log("--- scanned: " + result.text);
-
+        function(result) {
+            console.log("Scan format: " + result.format);
+            console.log("Scan text:   " + result.text);
         },
-        function (errorMessage) {
-            console.log("No scan. " + errorMessage);
+        function(error) {
+            console.log("No scan: " + error);
         }
     );
 

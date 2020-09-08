@@ -13,8 +13,13 @@
   "repository": "<fill-your-repository-here>",
   "dependencies": {
     "@nativescript/theme": "~2.2.1",
+    "base-64": "^0.1.0",
     "nativescript-barcodescanner": "^3.4.2",
-    "tns-core-modules": "~6.3.0"
+    "nativescript-toast": "^2.0.0",
+    "nativescript-toasts": "^1.0.3",
+    "nativescript-toasty": "^3.0.0-alpha.2",
+    "tns-core-modules": "~6.3.0",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "nativescript-dev-webpack": "~1.4.0"
