@@ -16,11 +16,17 @@
             <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center">
                 <TextField id="username" hint="Username" secure="false" backgroundColor="white" marginBottom="20"/>
                 <TextField id="password" hint="Password" secure="true" backgroundColor="white"/>
+                <Button width="70%" verticalAlignment="bottom" text="Log In" ontap="tap_login" marginTop="30" color="white" backgroundColor="#22384f"/>
+
             </StackLayout>
 
 
-            <Button width="70%" verticalAlignment="bottom" text="Log In" ontap="tap_login" marginBottom="30" color="white" backgroundColor="#22384f"/>
         </GridLayout>
+
+        <StackLayout id="activityIndicator" visibility="collapsed" verticalAlignment="center" width="100%" height="100%" backgroundColor="rgba(0,0,0,0.5)">
+            <Label text="Connessione..." horizontalAlignment="center"/>
+            <ActivityIndicator horizontalAlignment="center" busy="true"/>
+        </StackLayout>
     </GridLayout>
 
 </Page>

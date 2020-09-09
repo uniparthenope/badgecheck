@@ -3,7 +3,7 @@ let BarcodeScanner = require("nativescript-barcodescanner").BarcodeScanner;
 let barcodescanner = new BarcodeScanner();
 const httpModule = require("tns-core-modules/http");
 const dialogs = require("tns-core-modules/ui/dialogs");
-let toasty = require("nativescript-toasty").Toasty;
+let toasty = require("nativescript-toasty");
 
 let viewModel;
 let page;
@@ -13,6 +13,7 @@ function onNavigatingTo(args) {
     page = args.object;
     viewModel = observableModule.fromObject({});
     page.bindingContext = viewModel;
+
 
     scanQR();
 }
@@ -26,12 +27,13 @@ function scanQR() {
         cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
         message: 'GUIDA RAPIDA:\n\nPer ottenere il QR-Code aprire l`app ufficiale "app@uniparthenope".\n- Effettuare l`accesso.\n- Aprire la pagina BADGE.\n- Doppio-click sul QR-Code per zoom.\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        //message: "Scan QR",
         preferFrontCamera: true,     // Android only, default false
         showFlipCameraButton: false,   // default false
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
         resultDisplayDuration: 0,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
-        beepOnScan: false,             // Play or Suppress beep on scan (default true)
+        beepOnScan: true,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         closeCallback: () => {
             //console.log("Scanner closed @ " + new Date().getTime());
@@ -55,16 +57,18 @@ function scanQR() {
                 console.log(response.statusCode);
 
                 if(response.statusCode === 500){
-                    let toast = new toasty({"text": result.errMsg});
-                    toast.setBackgroundColor("#BB0000");
-                    toast.setToastPosition(4);
-                    toast.show();
+                    new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n",
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor:"#AA0000" }).show();
                 }
                 else {
-                    let toast = new toasty({"text": result.status});
-                    toast.setBackgroundColor("#00BB00");
-                    toast.setToastPosition(4);
-                    toast.show();
+                    new toasty.Toasty({"text": "\n\nAUTORIZZATO !\n\n",
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor:"#00AA00" }).show();
                 }
 
             }, error => {
