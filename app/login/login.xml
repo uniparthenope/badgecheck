@@ -1,20 +1,26 @@
 <Page
     navigatingTo="onNavigatingTo"
-    xmlns="http://schemas.nativescript.org/tns.xsd">
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    xmlns:x="nativescript-statusbar"
+    >
+    <x:StatusBar ios:barStyle="light" barColor="rgb(34, 56, 79)" />
+
 
     <ActionBar>
-        <Label text="Colonnina 1.0"/>
+        <Label text="BadgeCheck"/>
     </ActionBar>
 
-    <StackLayout >
-        <StackLayout>
-            <TextField id="username" hint="Username" secure="false"/>
-        </StackLayout>
+    <GridLayout backgroundColor="rgba(255,255,255,0.7)" >
+        <Image src="~/images/logo_new.png"/>
+        <GridLayout margin="15 15 15 15" backgroundColor="rgba(34, 56, 79, 0.7)" borderRadius="25" height="65%">
+            <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center">
+                <TextField id="username" hint="Username" secure="false" backgroundColor="white" marginBottom="20"/>
+                <TextField id="password" hint="Password" secure="true" backgroundColor="white"/>
+            </StackLayout>
 
-        <StackLayout >
-            <TextField id="password" hint="Password" secure="true" />
-        </StackLayout>
 
-        <Button text="Log In" ontap="tap_login"/>
-    </StackLayout>
+            <Button width="70%" verticalAlignment="bottom" text="Log In" ontap="tap_login" marginBottom="30" color="white" backgroundColor="#22384f"/>
+        </GridLayout>
+    </GridLayout>
+
 </Page>

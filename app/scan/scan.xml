@@ -6,4 +6,13 @@
         <Label text="Scan Page"/>
     </ActionBar>
 
+    <GridLayout >
+
+        <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7"/>
+        <StackLayout verticalAlignment="bottom">
+            <Button ontap="tap_scan" width="70%" verticalAlignment="bottom" text="Restart Scan" marginBottom="15" color="white" backgroundColor="#22384f"/>
+
+        </StackLayout>
+    </GridLayout>
+
 </Page>

@@ -1,12 +1,20 @@
 <Page
     navigatingTo="onNavigatingTo"
-    xmlns="http://schemas.nativescript.org/tns.xsd">
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    xmlns:x="nativescript-statusbar">
 
+    <x:StatusBar ios:barStyle="light" barColor="rgb(34, 56, 79)" />
     <ActionBar>
-        <Label text="HOME"/>
+        <Label text="Home Page"/>
     </ActionBar>
 
     <GridLayout >
-    <Button ontap="tap_scan" verticalAlignment="bottom" marginBottom="10" text="Start Scan ..."/>
+
+        <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7"/>
+        <StackLayout verticalAlignment="bottom">
+            <Button ontap="tap_scan" width="70%" verticalAlignment="bottom" text="Start Scan" marginBottom="15" color="white" backgroundColor="#22384f"/>
+            <Button width="70%" verticalAlignment="bottom" text="Button 2" marginBottom="30" color="white" backgroundColor="#22384f"/>
+
+        </StackLayout>
     </GridLayout>
 </Page>

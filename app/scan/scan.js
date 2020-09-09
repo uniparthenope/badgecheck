@@ -25,13 +25,13 @@ function scanQR() {
         formats: "QR_CODE, EAN_13, CODE_128",
         cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
-        message: "Scan QR code", // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
-        preferFrontCamera: false,     // Android only, default false
+        message: 'GUIDA RAPIDA:\n\nPer ottenere il QR-Code aprire l`app ufficiale "app@uniparthenope".\n- Effettuare l`accesso.\n- Aprire la pagina BADGE.\n- Doppio-click sul QR-Code per zoom.\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        preferFrontCamera: true,     // Android only, default false
         showFlipCameraButton: false,   // default false
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
         resultDisplayDuration: 0,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
-        beepOnScan: true,             // Play or Suppress beep on scan (default true)
+        beepOnScan: false,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         closeCallback: () => {
             //console.log("Scanner closed @ " + new Date().getTime());
@@ -54,14 +54,16 @@ function scanQR() {
                 const result = response.content.toJSON();
                 console.log(response.statusCode);
 
-                if(response.statusCode == 500){
+                if(response.statusCode === 500){
                     let toast = new toasty({"text": result.errMsg});
                     toast.setBackgroundColor("#BB0000");
+                    toast.setToastPosition(4);
                     toast.show();
                 }
                 else {
                     let toast = new toasty({"text": result.status});
                     toast.setBackgroundColor("#00BB00");
+                    toast.setToastPosition(4);
                     toast.show();
                 }
 
@@ -85,3 +87,7 @@ function scanQR() {
     );
 
 }
+
+exports.tap_scan = function () {
+    scanQR();
+};
