@@ -13,7 +13,7 @@
         <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7"/>
         <StackLayout marginTop="50">
             <Label text="Tablet Identifier:" marginBottom="5" marginLeft="50"/>
-            <TextField verticalAlignment="top" id="id_tab" hint="ID-Tablet" backgroundColor="white" borderWidth="1" borderColor="#00008b" height="50" width="70%"/>
+            <TextField autocapitalizationType="allCharacters" verticalAlignment="top" id="id_tab" hint="ID-Tablet" backgroundColor="white" borderWidth="1" borderColor="#00008b" height="50" width="70%"/>
         </StackLayout>
 
 
