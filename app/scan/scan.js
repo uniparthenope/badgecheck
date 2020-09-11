@@ -4,6 +4,8 @@ let barcodescanner = new BarcodeScanner();
 const httpModule = require("tns-core-modules/http");
 const dialogs = require("tns-core-modules/ui/dialogs");
 let toasty = require("nativescript-toasty");
+const frame = require("tns-core-modules/ui/frame");
+
 
 let viewModel;
 let page;
@@ -37,6 +39,12 @@ function scanQR() {
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         closeCallback: () => {
             //console.log("Scanner closed @ " + new Date().getTime());
+            //ALWAYS ON
+            const nav = {
+                moduleName: "scan/scan",
+                clearHistory: true
+            };
+            frame.Frame.topmost().navigate(nav);
         },
         continuousScanCallback: function (result) {
             console.log(result.format + ": " + result.text + " (count: " + count + ")");

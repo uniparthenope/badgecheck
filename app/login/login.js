@@ -76,7 +76,7 @@ exports.tap_login = function(){
         dialogs.alert({
             title: "Errore!",
             message: "I campi Username e Password non possono essere vuoti!",
-            okButtonTexext: "OK"
+            okButtonText: "OK"
         });
     }
 };
