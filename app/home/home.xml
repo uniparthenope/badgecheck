@@ -10,10 +10,15 @@
 
     <GridLayout >
 
+        <StackLayout horizontalAlignment="center" marginTop="50">
+            <Label text="ID TABLET:" fontSize="22"/>
+            <Label id="id_tab" text="--" fontSize="26" color="red" textAlignment="center"/>
+        </StackLayout>
+
         <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7"/>
         <StackLayout verticalAlignment="bottom">
             <Button ontap="tap_scan" width="70%" verticalAlignment="bottom" text="Start Scan" marginBottom="15" color="white" backgroundColor="#22384f"/>
-            <Button ontap="tap_test" width="70%" verticalAlignment="bottom" text="Button 2" marginBottom="30" color="white" backgroundColor="#22384f"/>
+            <Button ontap="tap_settings" width="70%" verticalAlignment="bottom" text="Settings" marginBottom="30" color="white" backgroundColor="#22384f"/>
 
         </StackLayout>
     </GridLayout>

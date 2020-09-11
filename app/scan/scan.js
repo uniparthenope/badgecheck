@@ -4,11 +4,15 @@ let barcodescanner = new BarcodeScanner();
 const httpModule = require("tns-core-modules/http");
 const dialogs = require("tns-core-modules/ui/dialogs");
 let toasty = require("nativescript-toasty");
+let sound = require("nativescript-sound");
 const frame = require("tns-core-modules/ui/frame");
+let appSettings = require("tns-core-modules/application-settings");
+
 
 
 let viewModel;
 let page;
+let sounds;
 
 function onNavigatingTo(args) {
 
@@ -16,6 +20,10 @@ function onNavigatingTo(args) {
     viewModel = observableModule.fromObject({});
     page.bindingContext = viewModel;
 
+    sounds = {
+        "ok": sound.create("/Users/gennaromellone/WebstormProjects/badgecheck/app/sounds/success.mp3"),
+        "wrong": sound.create("/Users/gennaromellone/WebstormProjects/badgecheck/app/sounds/wrong.mp3"),
+    };
 
     scanQR();
 }
@@ -35,7 +43,7 @@ function scanQR() {
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
         resultDisplayDuration: 0,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
-        beepOnScan: true,             // Play or Suppress beep on scan (default true)
+        beepOnScan: false,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         closeCallback: () => {
             //console.log("Scanner closed @ " + new Date().getTime());
@@ -58,12 +66,14 @@ function scanQR() {
                     "Authorization" : "Basic "+ global.encodedStr
                 },
                 content : JSON.stringify({
-                    token : result.text
+                    token : result.text,
+                    id_tablet : appSettings.getString("id_tab","NA")
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
 
                 if(response.statusCode === 500){
+                    sounds['wrong'].play();
                     new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n" + result.errMsg,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
@@ -71,6 +81,7 @@ function scanQR() {
                         backgroundColor:"#AA0000" }).show();
                 }
                 else {
+                    sounds['ok'].play();
                     new toasty.Toasty({"text": "\n\nAUTORIZZATO !\n\n",
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
