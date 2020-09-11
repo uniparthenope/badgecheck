@@ -62,10 +62,9 @@ function scanQR() {
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
-                console.log(response.statusCode);
 
                 if(response.statusCode === 500){
-                    new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n",
+                    new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n" + result.errMsg,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
