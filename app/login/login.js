@@ -6,7 +6,7 @@ let utf8 = require('utf8');
 const dialogs = require("tns-core-modules/ui/dialogs");
 const Color = require("tns-core-modules/color");
 const httpModule = require("tns-core-modules/http");
-
+const Sound = require("nativescript-sound-kak");
 
 
 
@@ -17,6 +17,9 @@ function onNavigatingTo(args) {
 
     page = args.object;
     viewModel = observableModule.fromObject({});
+
+    const beep = Sound.create("~/sounds/success.mp3"); // preload the audio file
+    beep.play();
 
     page.bindingContext = viewModel;
 }
@@ -54,11 +57,20 @@ exports.tap_login = function(){
             }
             else {
                 loading.visibility = "collapsed";
-                const nav = {
-                    moduleName: "home/home",
-                    clearHistory: true
-                };
-                frame.Frame.topmost().navigate(nav);
+                if (result.user.grpId === 7 || result.user.grpId === 99){
+                    const nav = {
+                        moduleName: "home/home",
+                        clearHistory: true
+                    };
+                    frame.Frame.topmost().navigate(nav);
+                }
+                else{
+                    dialogs.alert({
+                        title: "Errore: Login",
+                        message: "Utente non supportato!",
+                        okButtonText: "OK"
+                    });
+                }
             }
 
         }, error => {

@@ -14,7 +14,7 @@
         <Image src="~/images/logo_new.png"/>
         <GridLayout margin="15 15 15 15" backgroundColor="rgba(34, 56, 79, 0.7)" borderRadius="25" height="65%">
             <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center">
-                <TextField id="username" hint="Username" secure="false" backgroundColor="white" marginBottom="20"/>
+                <TextField id="username" hint="Username" autocapitalizationType="none" secure="false" backgroundColor="white" marginBottom="20"/>
                 <TextField id="password" hint="Password" secure="true" backgroundColor="white"/>
                 <Button width="70%" verticalAlignment="bottom" text="Log In" ontap="tap_login" marginTop="30" color="white" backgroundColor="#22384f"/>
 
