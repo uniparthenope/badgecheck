@@ -11,7 +11,7 @@
     <GridLayout >
 
         <StackLayout horizontalAlignment="center" marginTop="50">
-            <Label text="ID TABLET:" fontSize="22"/>
+            <Label text="BADGECHECK ID:" fontSize="22"/>
             <Label id="id_tab" text="--" fontSize="26" color="red" textAlignment="center"/>
         </StackLayout>
 
