@@ -32,7 +32,7 @@ function scanQR() {
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
         message: 'GUIDA RAPIDA:\n\nPer ottenere il QR-Code aprire l`app ufficiale "app@uniparthenope".\n- Effettuare l`accesso.\n- Aprire la pagina BADGE.\n- Doppio-click sul QR-Code per zoom.\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
         //message: "Scan QR",
-        preferFrontCamera: true,     // Android only, default false
+        preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
         showFlipCameraButton: false,   // default false
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
