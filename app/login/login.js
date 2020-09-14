@@ -7,6 +7,8 @@ const dialogs = require("tns-core-modules/ui/dialogs");
 const Color = require("tns-core-modules/color");
 const httpModule = require("tns-core-modules/http");
 const Sound = require("nativescript-sound-kak");
+let appversion = require("nativescript-appversion");
+
 
 
 
@@ -20,6 +22,13 @@ function onNavigatingTo(args) {
 
     const beep = Sound.create("~/sounds/success.mp3"); // preload the audio file
     beep.play();
+
+    appversion.getVersionName().then(function(v) {
+        global.ver = v;
+        page.getViewById("version").text = "v. " + v;
+
+    });
+
 
     page.bindingContext = viewModel;
 }

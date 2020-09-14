@@ -19,6 +19,7 @@
         <StackLayout verticalAlignment="bottom">
             <Button ontap="tap_scan" width="70%" verticalAlignment="bottom" text="Start Scan" marginBottom="15" color="white" backgroundColor="#22384f"/>
             <Button ontap="tap_settings" width="70%" verticalAlignment="bottom" text="Settings" marginBottom="30" color="white" backgroundColor="#22384f"/>
+            <Label id="version" text="--" fontSize="13" color="red" textAlignment="center"/>
 
         </StackLayout>
     </GridLayout>

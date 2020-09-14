@@ -6,4 +6,6 @@ let domain = "https://api.uniparthenope.it";
 global.url = domain + "/UniparthenopeApp/v1/";
 global.url_general = domain + "/";
 
+global.ver;
+
 application.run({ moduleName: "app-root" });

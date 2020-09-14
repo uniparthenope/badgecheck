@@ -1,11 +1,11 @@
 {
   "nativescript": {
     "id": "it.uniparthenope.badgecheck",
-    "tns-android": {
-      "version": "6.3.1"
-    },
     "tns-ios": {
       "version": "6.3.0"
+    },
+    "tns-android": {
+      "version": "6.3.1"
     }
   },
   "description": "NativeScript Application",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@nativescript/theme": "~2.2.1",
     "base-64": "^0.1.0",
+    "nativescript-appversion": "^1.4.4",
     "nativescript-audio-player": "^1.0.3",
     "nativescript-barcodescanner": "^3.4.2",
     "nativescript-sound-kak": "^1.2.0",
