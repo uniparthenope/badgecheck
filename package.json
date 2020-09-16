@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "it.uniparthenope.badgecheck",
+    "id": "it.uniparthenope.badgechecker",
     "tns-ios": {
       "version": "6.3.0"
     },
