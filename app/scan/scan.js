@@ -55,7 +55,7 @@ function scanQR() {
 
             if(debug){
                 //QrCode Scansionato
-                new toasty.Toasty({"text": "\n\nSCANSIONATO!\nContatto il server...\n" + result.errMsg,
+                new toasty.Toasty({"text": "\n\nSCANSIONATO!\nContatto il server...\n",
                     position: toasty.ToastPosition.TOP_RIGHT,
                     duration: toasty.ToastDuration.SHORT,
                     yAxisOffset: 100,
@@ -81,7 +81,7 @@ function scanQR() {
                 const result = response.content.toJSON();
                 //QrCode Scansionato
                 if (debug){
-                    new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n" + result.errMsg,
+                    new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n",
                         position: toasty.ToastPosition.TOP_RIGHT,
                         duration: toasty.ToastDuration.SHORT,
                         yAxisOffset: 100,
