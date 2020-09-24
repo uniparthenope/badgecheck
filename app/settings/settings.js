@@ -15,6 +15,7 @@ function onNavigatingTo(args) {
     viewModel = observableModule.fromObject({});
     page.getViewById("id_tab").text = appSettings.getString("id_tab","ID-Tablet");
     page.getViewById("front_camera").checked = appSettings.getBoolean("front_camera", true);
+    page.getViewById("debug_mode").checked = appSettings.getBoolean("debug", false);
 
 
     page.bindingContext = viewModel;
@@ -24,10 +25,14 @@ exports.onNavigatingTo = onNavigatingTo;
 exports.tap_save = function(){
     let id_tab = page.getViewById("id_tab").text;
     let front_camera = page.getViewById("front_camera").checked;
+    let debug_mode = page.getViewById("debug_mode").checked;
+
 
     if ( id_tab !== ""){
         appSettings.setString("id_tab", id_tab);
         appSettings.setBoolean("front_camera",front_camera);
+        appSettings.setBoolean("debug_mode",debug_mode);
+
         dialogs.confirm({
             title: "Successo",
             message: "Salvataggio effettuato!",

@@ -11,11 +11,13 @@ let QR_LEN = 1000;
 let viewModel;
 let page;
 let qrcodes = [];
+let debug;
 
 function onNavigatingTo(args) {
 
     page = args.object;
     viewModel = observableModule.fromObject({});
+    debug = appSettings.getBoolean("debug_mode",false);
 
     scanQR();
 
@@ -50,6 +52,16 @@ function scanQR() {
             frame.Frame.topmost().navigate(nav);
         },
         continuousScanCallback: function (result) {
+
+            if(debug){
+                //QrCode Scansionato
+                new toasty.Toasty({"text": "\n\nSCANSIONATO!\nContatto il server...\n" + result.errMsg,
+                    position: toasty.ToastPosition.TOP_RIGHT,
+                    duration: toasty.ToastDuration.SHORT,
+                    yAxisOffset: 100,
+                    backgroundColor:"#AAAA00" }).show();
+            }
+
             console.log(result);
             //console.log(result.format + ": " + result.text + " (count: " + count + ")");
             //barcodescanner.message = "SCANNED";
@@ -67,6 +79,14 @@ function scanQR() {
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
+                //QrCode Scansionato
+                if (debug){
+                    new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n" + result.errMsg,
+                        position: toasty.ToastPosition.TOP_RIGHT,
+                        duration: toasty.ToastDuration.SHORT,
+                        yAxisOffset: 100,
+                        backgroundColor:"#AAAA00" }).show();
+                }
 
                 if(response.statusCode === 500){
                     new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n" + result.errMsg,
