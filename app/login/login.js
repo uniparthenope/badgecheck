@@ -74,6 +74,8 @@ exports.tap_login = function(){
                     frame.Frame.topmost().navigate(nav);
                 }
                 else{
+                    loading.visibility = "collapsed";
+
                     dialogs.alert({
                         title: "Errore: Login",
                         message: "Utente non supportato!",
@@ -83,6 +85,8 @@ exports.tap_login = function(){
             }
 
         }, error => {
+            loading.visibility = "collapsed";
+
             dialogs.confirm({
                 title: "Errore: Login",
                 message: error.toString(),

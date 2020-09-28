@@ -77,6 +77,7 @@ function scanQR() {
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
+
                 //QrCode Scansionato
                 if (debug){
                     new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n",
@@ -87,18 +88,18 @@ function scanQR() {
                 }
 
                 if(response.statusCode === 500){
-                    new toasty.Toasty({"text": "\n\nNON AUTORIZZATO !\n\n" + result.errMsg,
+                    new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
-                        backgroundColor:"#AA0000" }).show();
+                        backgroundColor: result.color}).show();
                 }
                 else {
-                    new toasty.Toasty({"text": "\n\nAUTORIZZATO !\n\n",
+                    new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
-                        backgroundColor:"#00AA00" }).show();
+                        backgroundColor: result.color}).show();
                 }
 
             }, error => {
