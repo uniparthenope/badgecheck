@@ -65,7 +65,7 @@ function scanQR() {
             console.log(result);
 
             httpModule.request({
-                url : global.url_general + "Badges/v1/checkQrCode",
+                url : global.url_general + "Badges/v2/checkQrCode",
                 method : "POST",
                 headers : {
                     "Content-Type": "application/json",
