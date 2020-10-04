@@ -62,7 +62,7 @@ function scanQR() {
                     backgroundColor:"#AAAA00" }).show();
             }
 
-            console.log(result);
+            console.log(result.text);
 
             httpModule.request({
                 url : global.url_general + "Badges/v2/checkQrCode",

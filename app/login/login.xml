@@ -2,6 +2,7 @@
     navigatingTo="onNavigatingTo"
     xmlns="http://schemas.nativescript.org/tns.xsd"
     xmlns:x="nativescript-statusbar"
+    xmlns:CheckBox="@nstudio/nativescript-checkbox"
     >
     <x:StatusBar ios:barStyle="light" barColor="rgb(34, 56, 79)" />
 
@@ -16,6 +17,8 @@
             <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center">
                 <TextField id="username" hint="Username" autocapitalizationType="none" secure="false" backgroundColor="white" marginBottom="20"/>
                 <TextField id="password" hint="Password" secure="true" backgroundColor="white"/>
+                <CheckBox:CheckBox text="Ricordami" checked="false"/>
+
                 <Button width="70%" verticalAlignment="bottom" text="Log In" ontap="tap_login" marginTop="30" color="white" backgroundColor="#22384f"/>
                 <Label id="version" text="--" fontSize="13" color="white" textAlignment="center"/>
 
