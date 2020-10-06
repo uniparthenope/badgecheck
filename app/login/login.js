@@ -9,9 +9,6 @@ const httpModule = require("tns-core-modules/http");
 const Sound = require("nativescript-sound-kak");
 let appversion = require("nativescript-appversion");
 
-
-
-
 let viewModel;
 let page;
 

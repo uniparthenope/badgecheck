@@ -5,27 +5,26 @@
       "version": "6.3.0"
     },
     "tns-android": {
-      "version": "6.5.3"
+      "version": "6.3.1"
     }
   },
   "description": "NativeScript Application",
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
-    "@nativescript/theme": "^3.0.0",
+    "@nativescript/theme": "~2.2.1",
+    "@nstudio/nativescript-checkbox": "^1.0.0",
     "base-64": "^0.1.0",
-    "nativescript": "^7.0.10",
     "nativescript-appversion": "^1.4.4",
     "nativescript-audio-player": "^1.0.3",
-    "nativescript-barcodescanner": "^4.0.1",
+    "nativescript-barcodescanner": "^3.4.2",
     "nativescript-sound-kak": "^1.2.0",
     "nativescript-statusbar": "^5.0.0",
     "nativescript-store-update": "^1.0.2",
     "nativescript-toast": "^2.0.0",
     "nativescript-toasts": "^1.0.3",
     "nativescript-toasty": "^3.0.0-alpha.2",
-    "npm": "^6.14.8",
-    "tns-core-modules": "^6.5.20",
+    "tns-core-modules": "~6.3.0",
     "utf8": "^3.0.0"
   },
   "devDependencies": {
