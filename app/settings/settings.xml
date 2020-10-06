@@ -31,7 +31,8 @@
 
 
         <StackLayout verticalAlignment="bottom">
-            <Button ontap="tap_save" width="70%" verticalAlignment="bottom" text="Save" marginBottom="30" color="white" backgroundColor="#22384f"/>
+            <Button ontap="tap_forget" id="btn_forget" width="70%" verticalAlignment="bottom" text="Dimentica Account" marginBottom="5" color="white" backgroundColor="#22384f"/>
+            <Button ontap="tap_save" width="70%" verticalAlignment="bottom" text="Salva" marginBottom="30" color="white" backgroundColor="#22384f"/>
 
         </StackLayout>
     </GridLayout>

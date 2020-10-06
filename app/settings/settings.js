@@ -13,10 +13,17 @@ function onNavigatingTo(args) {
 
     page = args.object;
     viewModel = observableModule.fromObject({});
+
     page.getViewById("id_tab").text = appSettings.getString("id_tab","ID-Tablet");
     page.getViewById("front_camera").checked = appSettings.getBoolean("front_camera", true);
     page.getViewById("debug_mode").checked = appSettings.getBoolean("debug", false);
 
+
+    let forget_btn = page.getViewById("btn_forget");
+    if(appSettings.getBoolean("remember",false))
+        forget_btn.visibility = "visible";
+    else
+        forget_btn.visibility = "collapsed";
 
     page.bindingContext = viewModel;
 }
@@ -49,4 +56,13 @@ exports.tap_save = function(){
         }).then(function (result) {
         });
     }
+};
+exports.tap_forget = function() {
+    appSettings.setBoolean("remember",false);
+    appSettings.setString("token","");
+    const nav = {
+        moduleName: "login/login",
+        clearHistory: true
+    };
+    frame.Frame.topmost().navigate(nav);
 };
