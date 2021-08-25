@@ -7,22 +7,29 @@ let toasty = require("nativescript-toasty");
 const frame = require("tns-core-modules/ui/frame");
 let appSettings = require("tns-core-modules/application-settings");
 
-let base64= require('base-64');
-let utf8 = require('utf8');
-
 let QR_LEN = 1000;
 let viewModel;
 let page;
 let qrcodes = [];
 let debug;
+let context;
+
+let base64= require('base-64');
+let utf8 = require('utf8');
 
 function onNavigatingTo(args) {
 
     page = args.object;
     viewModel = observableModule.fromObject({});
     debug = appSettings.getBoolean("debug_mode",false);
+    context = args.context;
+    console.log(context.data);
 
-    scanQR();
+    if (context.has_info){
+        scanQR();
+    }
+
+    //scanQR();
 
     page.bindingContext = viewModel;
 }
@@ -35,7 +42,7 @@ function scanQR() {
         formats: "QR_CODE, EAN_13, CODE_128",
         cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
-        message: 'GUIDA RAPIDA:\n\nPer ottenere il QR-Code aprire l`app ufficiale "app@uniparthenope".\n- Effettuare l`accesso.\n- Aprire la pagina BADGE.\n- Doppio-click sul QR-Code per zoom.\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        message: 'SCANSIONE GREEN PASS\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
         //message: "Scan QR",
         preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
         showFlipCameraButton: false,   // default false
@@ -45,15 +52,6 @@ function scanQR() {
         beepOnScan: true,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         reportDuplicates: false,
-        closeCallback: () => {
-            //console.log("Scanner closed @ " + new Date().getTime());
-            //ALWAYS ON
-            const nav = {
-                moduleName: "scan/scan",
-                clearHistory: true
-            };
-            //frame.Frame.topmost().navigate(nav);
-        },
         continuousScanCallback: function (result) {
 
             if(debug){
@@ -66,21 +64,21 @@ function scanQR() {
             }
 
             console.log(result.text);
-
             httpModule.request({
-                url : global.url_general + "Badges/v3/checkQrCode",
+                url : global.url_general + "Badges/v3/checkGreenPass",
                 method : "POST",
                 headers : {
                     "Content-Type": "application/json",
                     "Authorization" : "Basic "+ global.encodedStr
                 },
                 content : JSON.stringify({
-                    token : result.text,
-                    id_tablet : appSettings.getString("id_tab","NA")
+                    token_GP : result.text,
+                    data : context.data,
+                    id: context.id
+                    //id_tablet : appSettings.getString("id_tab","NA")
                 })
             }).then((response) => {
                 const result = response.content.toJSON();
-                console.log(response.statusCode);
 
                 //QrCode Scansionato
                 if (debug){
@@ -98,52 +96,21 @@ function scanQR() {
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
                 }
-                // If no Green Pass
-                else if(response.statusCode === 501){
-                    new toasty.Toasty({"text": result.message,
-                        position: toasty.ToastPosition.CENTER,
-                        duration: toasty.ToastDuration.LONG,
-                        yAxisOffset: 100,
-                        backgroundColor: result.color}).show();
 
-                    console.log(result.data);
-
-                    const nav = {
-                        moduleName: "greenpass/greenpass",
-                        context: {
-                            data: result.data,
-                            id: result.id,
-                            has_info: true
-                        }
-                    };
-                    barcodescanner.stop();
-                    frame.Frame.topmost().navigate(nav);
-                }
-                else if(response.statusCode === 502){
-                    new toasty.Toasty({"text": result.message,
-                        position: toasty.ToastPosition.CENTER,
-                        duration: toasty.ToastDuration.LONG,
-                        yAxisOffset: 100,
-                        backgroundColor: result.color}).show();
-
-                    console.log(result.data);
-
-                    const nav = {
-                        moduleName: "greenpass/greenpass",
-                        context: {
-                            data: result.data,
-                            has_info: false
-                        }
-                    };
-                    barcodescanner.stop();
-                    frame.Frame.topmost().navigate(nav);
-                }
                 else {
                     new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+
+                    const nav = {
+                        moduleName: "scan/scan"
+
+                    };
+                    barcodescanner.stop();
+                    frame.Frame.topmost().goBack()
+                    //frame.Frame.topmost().navigate(nav);
                 }
 
             }, error => {
@@ -166,7 +133,20 @@ function scanQR() {
 exports.tap_scan = function () {
     scanQR();
 };
+exports.tap_save = function () {
+    let name = page.getViewById("name").text;
+    let surname = page.getViewById("surname").text;
+    let birth = page.getViewById("birth").text;
+    let s = ":" + name.toUpperCase() + ":" + surname.toUpperCase() + ":" + birth;
+    let bytes = utf8.encode(s);
+    let _s = base64.encode(bytes);
 
+    context.data = context.data + _s;
+
+    console.log(context.data);
+    scanQR();
+
+};
 function scanQR_new() {
     barcodescanner.scan({
         formats: "QR_CODE, EAN_13, CODE_128",
