@@ -132,6 +132,7 @@ function scanQR() {
                         moduleName: "greenpass/greenpass",
                         context: {
                             data: result.data,
+                            id: result.id,
                             has_info: false
                         }
                     };
