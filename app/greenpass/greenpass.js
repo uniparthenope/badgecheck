@@ -13,6 +13,8 @@ let page;
 let qrcodes = [];
 let debug;
 let context;
+let validity = [24];
+let val_index = 0;
 
 let base64= require('base-64');
 let utf8 = require('utf8');
@@ -20,18 +22,19 @@ let utf8 = require('utf8');
 function onNavigatingTo(args) {
 
     page = args.object;
-    viewModel = observableModule.fromObject({});
+    viewModel = observableModule.fromObject({
+        validity: validity
+    });
     debug = appSettings.getBoolean("debug_mode",false);
     context = args.context;
     console.log(context.data);
 
-    if (context.has_info){
-        scanQR();
-    }
+    getListGreenPass();
+
 
     //scanQR();
 
-    page.bindingContext = viewModel;
+    //page.bindingContext = viewModel;
 }
 
 exports.onNavigatingTo = onNavigatingTo;
@@ -97,7 +100,55 @@ function scanQR() {
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
                 }
+                else if (response.statusCode === 203){
+                    dialogs.confirm({
+                        title: "Conferma Dati Personali",
+                        message: result.msg,
+                        okButtonText: "Confermo",
+                        cancelButtonText: "Rifiuto",
+                        neutralButtonText: "Chiama Assistenza"
+                    }).then(function (dialog_result) {
+                        barcodescanner.stop();
+                        if(dialog_result){
+                            //console.log("CONFERMATO!!");
+                            //Invia conferma a API
+                            httpModule.request({
+                                url : global.url_general + "Badges/v3/checkGreenPassNoScan",
+                                method : "POST",
+                                headers : {
+                                    "Content-Type": "application/json",
+                                    "Authorization" : "Basic "+ global.encodedStr
+                                },
+                                content : JSON.stringify({
+                                    id: context.id,
+                                    expiry: result.expiry
+                                    //id_tablet : appSettings.getString("id_tab","NA")
+                                })
+                            }).then((response) => {
+                                const result = response.content.toJSON();
+                                console.log(result);
 
+                                new toasty.Toasty({"text": result.message,
+                                    position: toasty.ToastPosition.CENTER,
+                                    duration: toasty.ToastDuration.LONG,
+                                    yAxisOffset: 100,
+                                    backgroundColor: result.color}).show();
+                            });
+                            frame.Frame.topmost().goBack();
+
+                        }
+                        else{
+                            frame.Frame.topmost().goBack();
+                            const nav = {
+                                moduleName: "scan/scan",
+                                clearHistory: true
+                            };
+                            frame.Frame.topmost().navigate(nav);
+                        }
+
+                    });
+
+                }
                 else {
                     new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
@@ -110,7 +161,7 @@ function scanQR() {
 
                     };
                     barcodescanner.stop();
-                    frame.Frame.topmost().goBack()
+                    frame.Frame.topmost().goBack();
                     //frame.Frame.topmost().navigate(nav);
                 }
 
@@ -131,21 +182,76 @@ function scanQR() {
 
 }
 
-exports.tap_scan = function () {
+function getListGreenPass() {
+    httpModule.request({
+        url: global.url_general + "Badges/v3/listGreenPass",
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + global.encodedStr
+        },
+    }).then((response) => {
+        const result = response.content.toJSON();
+        if (response.statusCode === 200) {
+            validity = result.validity;
+            console.log(validity);
+            page.bindingContext = viewModel;
+        }
+    });
+}
+
+exports.tap_scanGP = function () {
+    if(!context.has_info){
+        context.data = 'NODATA';
+    }
     scanQR();
 };
 
-exports.tap_save = function () {
-    let name = page.getViewById("name").text;
-    let surname = page.getViewById("surname").text;
-    let birth = page.getViewById("birth").text;
-    let s = base64.decode(context.data) + ":" + name.toUpperCase() + ":" + surname.toUpperCase() + ":" + birth;
-    let bytes = utf8.encode(s);
-    let _s = base64.encode(bytes);
+exports.tap_cartaceo = function () {
+    dialogs.confirm({
+        title: "Conferma Dati Personali",
+        message: "Confermo che la certificazione presentata ha durata di: " + validity[val_index] + "h",
+        okButtonText: "Confermo",
+        cancelButtonText: "Rifiuto",
+        neutralButtonText: "Chiama Assistenza"
+    }).then(function (dialog_result) {
+        if(dialog_result) {
+            //console.log("CONFERMATO!!");
+            //Invia conferma a API
+            httpModule.request({
+                url: global.url_general + "Badges/v3/checkGreenPassNoScan",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Basic " + global.encodedStr
+                },
+                content: JSON.stringify({
+                    id: context.id,
+                    expiry: validity[val_index]
+                    //id_tablet : appSettings.getString("id_tab","NA")
+                })
+            }).then((response) => {
+                const result = response.content.toJSON();
+                console.log(result);
 
-    context.data = _s;
+                new toasty.Toasty({
+                    "text": result.message,
+                    position: toasty.ToastPosition.CENTER,
+                    duration: toasty.ToastDuration.LONG,
+                    yAxisOffset: 100,
+                    backgroundColor: result.color
+                }).show();
+            });
+            frame.Frame.topmost().goBack();
+        }
+    });
+}
 
-    //console.log(context.data);
-    scanQR();
+exports.onListPickerLoaded = function (fargs) {
+    const listPickerComponent = fargs.object;
+    listPickerComponent.on("selectedIndexChange", (args) => {
+        const picker = args.object;
+        val_index = picker.selectedIndex;
 
-};
+    });
+}
