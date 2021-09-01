@@ -6,6 +6,8 @@ const dialogs = require("tns-core-modules/ui/dialogs");
 let toasty = require("nativescript-toasty");
 const frame = require("tns-core-modules/ui/frame");
 let appSettings = require("tns-core-modules/application-settings");
+let sound = require("nativescript-sound");
+let fm = require("tns-core-modules/file-system")
 
 let QR_LEN = 1000;
 let viewModel;
@@ -13,8 +15,9 @@ let page;
 let qrcodes = [];
 let debug;
 let context;
-let validity = [24];
+let validity = [24, 48];
 let val_index = 0;
+let warning;
 
 let base64= require('base-64');
 let utf8 = require('utf8');
@@ -26,8 +29,14 @@ function onNavigatingTo(args) {
         validity: validity
     });
     debug = appSettings.getBoolean("debug_mode",false);
+    let path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/wrong.mp3');
+    if(fm.File.exists(path)){
+        warning = sound.create(path);
+
+    }
     context = args.context;
     console.log(context.data);
+
 
     getListGreenPass();
 
@@ -212,9 +221,10 @@ exports.tap_cartaceo = function () {
         title: "Conferma Dati Personali",
         message: "Confermo che la certificazione presentata ha durata di: " + validity[val_index] + "h",
         okButtonText: "Confermo",
-        cancelButtonText: "Rifiuto",
+        cancelButtonText: "Annulla",
         neutralButtonText: "Chiama Assistenza"
     }).then(function (dialog_result) {
+        console.log(dialog_result);
         if(dialog_result) {
             //console.log("CONFERMATO!!");
             //Invia conferma a API
@@ -244,7 +254,12 @@ exports.tap_cartaceo = function () {
             });
             frame.Frame.topmost().goBack();
         }
-    });
+        else if (dialog_result === undefined){
+            console.log("DRIIIIIIN!!!!");
+            warning.play();
+
+        }}
+    );
 }
 
 exports.onListPickerLoaded = function (fargs) {
@@ -254,4 +269,21 @@ exports.onListPickerLoaded = function (fargs) {
         val_index = picker.selectedIndex;
 
     });
+}
+exports.tap_altro = function () {
+    //color="white" backgroundColor="#22384f"
+    let layout = page.getViewById("validity-layout");
+    let button = page.getViewById("altro");
+
+    if(layout.visibility === "visible"){
+        layout.visibility = "collapsed";
+        button.color = "white";
+        button.backgroundColor = "#22384f";
+    }
+    else{
+        layout.visibility = "visible";
+        button.color = "#22384f";
+        button.backgroundColor = "white";
+    }
+
 }

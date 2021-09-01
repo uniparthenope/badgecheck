@@ -18,6 +18,7 @@
     "nativescript-appversion": "^1.4.4",
     "nativescript-audio-player": "^1.0.3",
     "nativescript-barcodescanner": "^3.4.2",
+    "nativescript-sound": "^1.0.4",
     "nativescript-sound-kak": "^1.2.0",
     "nativescript-statusbar": "^5.0.0",
     "nativescript-store-update": "^1.0.2",

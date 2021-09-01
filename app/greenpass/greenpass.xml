@@ -8,13 +8,19 @@
 
     <GridLayout >
 
-        <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7"/>
-        <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center">
+        <Image src="~/images/logo_new.png" margin="10 10 10 10" verticalAlignment="center" horizontalAlignment="center" opacity="0.7" />
+
+        <StackLayout width="60%" horizontalAlignment="center" verticalAlignment="center" backgroundColor="rgba(255,255,255,0.8)" height="60%">
 
             <Button ontap="tap_scanGP" width="70%" verticalAlignment="bottom" text="Scan Green Pass QR" marginBottom="15" color="white" backgroundColor="#22384f"/>
-            <ListPicker id="validity-listview" items="{{ validity }}" selectedIndex="0" loaded="onListPickerLoaded"/>
+            <Button ontap="tap_altro" id="altro" width="70%" verticalAlignment="bottom" text="Certificazione Cartacea" marginBottom="15" color="white" backgroundColor="#22384f"/>
 
-            <Button ontap="tap_cartaceo" width="70%" verticalAlignment="bottom" text="Certificazione Cartacea" marginBottom="15" color="white" backgroundColor="#22384f"/>
+            <StackLayout id="validity-layout" margin="10 10 10 10" width="60%" borderColor="black" borderWidth="2" borderRadius="25" visibility="collapsed">
+                <Label text="Durata certificazione (ore):" fontSize="16" horizontalAlignment="center"/>
+                <ListPicker id="validity-listview" items="{{ validity }}" selectedIndex="0" loaded="onListPickerLoaded"/>
+                <Button ontap="tap_cartaceo" width="70%" verticalAlignment="bottom" text="Invia" marginBottom="15" color="white" backgroundColor="#22384f"/>
+
+            </StackLayout>
 
             <!--
                         <TextField id="name" hint="Nome" autocapitalizationType="none" secure="false" backgroundColor="white" marginBottom="20"/>
