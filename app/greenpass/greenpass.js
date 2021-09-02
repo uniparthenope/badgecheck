@@ -15,9 +15,11 @@ let page;
 let qrcodes = [];
 let debug;
 let context;
-let validity = [24, 48];
+let validity = [];
+let res_val;
 let val_index = 0;
 let warning, confirm;
+let loading;
 
 let base64= require('base-64');
 let utf8 = require('utf8');
@@ -29,6 +31,8 @@ function onNavigatingTo(args) {
         validity: validity
     });
     debug = appSettings.getBoolean("debug_mode",false);
+    loading = page.getViewById("activityIndicator");
+
     let w_path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/wrong.mp3');
     if(fm.File.exists(w_path))
         warning = sound.create(w_path);
@@ -203,10 +207,17 @@ function getListGreenPass() {
             "Authorization": "Basic " + global.encodedStr
         },
     }).then((response) => {
-        const result = response.content.toJSON();
+        res_val = response.content.toJSON();
+
         if (response.statusCode === 200) {
-            validity = result.validity;
-            console.log(validity);
+
+            while(validity.length > 0)
+                validity.pop();
+
+            for(let x=0; x<res_val.length; x++ ){
+                validity.push(res_val[x].desc);
+            }
+
             page.bindingContext = viewModel;
         }
     });
@@ -220,9 +231,10 @@ exports.tap_scanGP = function () {
 };
 
 exports.tap_cartaceo = function () {
+    loading.visibility="visible";
     dialogs.confirm({
         title: "Conferma Dati Personali",
-        message: "Confermo che la certificazione presentata ha durata di: " + validity[val_index] + "h",
+        message: "Confermo che la certificazione presentata ha durata di: " + res_val[val_index].expire + " giorni",
         okButtonText: "Confermo",
         cancelButtonText: "Annulla",
 
@@ -239,7 +251,7 @@ exports.tap_cartaceo = function () {
                 },
                 content: JSON.stringify({
                     id: context.id,
-                    expiry: validity[val_index]
+                    expiry: res_val[val_index].expire
                     //id_tablet : appSettings.getString("id_tab","NA")
                 })
             }).then((response) => {
@@ -254,7 +266,9 @@ exports.tap_cartaceo = function () {
                     backgroundColor: result.color
                 }).show();
             });
+            //loading.visibility="visible";
             frame.Frame.topmost().goBack();
+
         }
     });
     /*
@@ -385,21 +399,26 @@ exports.tap_altro = function () {
     let layout = page.getViewById("validity-operator");
     let layout_det = page.getViewById("validity-layout");
     let button = page.getViewById("altro");
+    let button_scan = page.getViewById("scan");
 
 
     if(layout.visibility === "visible"){
         layout.visibility = "collapsed";
         layout_det.visibility = "collapsed";
         button.color = "white";
-        button.backgroundColor = "#22384f";
+        button.backgroundColor = "purple";
+        button_scan.visibility = "visible";
+        button.text = "Altra Certificazione - Richiedi assistenza Operatore";
     }
     else{
         layout_det.visibility = "collapsed";
+        button_scan.visibility = "collapsed";
         warning.play();
         // Send API or Notification to an operator ...
         layout.visibility = "visible";
-        button.color = "#22384f";
+        button.color = "gray";
         button.backgroundColor = "white";
+        button.text = "Indietro";
     }
 
 }
