@@ -6,6 +6,8 @@ const dialogs = require("tns-core-modules/ui/dialogs");
 let toasty = require("nativescript-toasty");
 const frame = require("tns-core-modules/ui/frame");
 let appSettings = require("tns-core-modules/application-settings");
+let sound = require("nativescript-sound");
+let fm = require("tns-core-modules/file-system");
 
 let base64= require('base-64');
 let utf8 = require('utf8');
@@ -15,12 +17,19 @@ let viewModel;
 let page;
 let qrcodes = [];
 let debug;
+let warning, confirm;
 
 function onNavigatingTo(args) {
 
     page = args.object;
     viewModel = observableModule.fromObject({});
     debug = appSettings.getBoolean("debug_mode",false);
+    let w_path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/wrong.mp3');
+    if(fm.File.exists(w_path))
+        warning = sound.create(w_path);
+    let c_path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/confirm.mp3');
+    if(fm.File.exists(c_path))
+        confirm = sound.create(c_path);
 
     scanQR();
 
@@ -97,6 +106,7 @@ function scanQR() {
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+                    warning.play();
                 }
                 // If no Green Pass
                 else if(response.statusCode === 501){
@@ -145,6 +155,7 @@ function scanQR() {
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+                    confirm.play();
                 }
 
             }, error => {

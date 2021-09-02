@@ -7,7 +7,7 @@ let toasty = require("nativescript-toasty");
 const frame = require("tns-core-modules/ui/frame");
 let appSettings = require("tns-core-modules/application-settings");
 let sound = require("nativescript-sound");
-let fm = require("tns-core-modules/file-system")
+let fm = require("tns-core-modules/file-system");
 
 let QR_LEN = 1000;
 let viewModel;
@@ -17,7 +17,7 @@ let debug;
 let context;
 let validity = [24, 48];
 let val_index = 0;
-let warning;
+let warning, confirm;
 
 let base64= require('base-64');
 let utf8 = require('utf8');
@@ -29,13 +29,14 @@ function onNavigatingTo(args) {
         validity: validity
     });
     debug = appSettings.getBoolean("debug_mode",false);
-    let path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/wrong.mp3');
-    if(fm.File.exists(path)){
-        warning = sound.create(path);
+    let w_path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/wrong.mp3');
+    if(fm.File.exists(w_path))
+        warning = sound.create(w_path);
+    let c_path = fm.path.join(fm.knownFolders.currentApp().path, '/sounds/confirm.mp3');
+    if(fm.File.exists(c_path))
+        confirm = sound.create(c_path);
 
-    }
     context = args.context;
-    console.log(context.data);
 
 
     getListGreenPass();
@@ -142,6 +143,7 @@ function scanQR() {
                                     duration: toasty.ToastDuration.LONG,
                                     yAxisOffset: 100,
                                     backgroundColor: result.color}).show();
+
                             });
                             frame.Frame.topmost().goBack();
 
@@ -159,11 +161,13 @@ function scanQR() {
 
                 }
                 else {
+                    console.log(result)
                     new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+                    confirm.play();
 
                     const nav = {
                         moduleName: "scan/scan"
@@ -179,8 +183,7 @@ function scanQR() {
             });
 
         },
-    }).then(
-        function(result) {
+    }).then(function(result) {
             console.log("Scan format: " + result.format);
             console.log("Scan text:   " + result.text);
         },
@@ -222,9 +225,8 @@ exports.tap_cartaceo = function () {
         message: "Confermo che la certificazione presentata ha durata di: " + validity[val_index] + "h",
         okButtonText: "Confermo",
         cancelButtonText: "Annulla",
-        neutralButtonText: "Chiama Assistenza"
-    }).then(function (dialog_result) {
-        console.log(dialog_result);
+
+    }).then(function (dialog_result){
         if(dialog_result) {
             //console.log("CONFERMATO!!");
             //Invia conferma a API
@@ -254,12 +256,120 @@ exports.tap_cartaceo = function () {
             });
             frame.Frame.topmost().goBack();
         }
-        else if (dialog_result === undefined){
-            console.log("DRIIIIIIN!!!!");
-            warning.play();
+    });
+    /*
+    barcodescanner.scan({
+        formats: "QR_CODE, EAN_13, CODE_128",
+        cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
+        cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
+        message: 'SCANSIONE QR-CODE OPERATORE\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        //message: "Scan QR",
+        preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
+        showFlipCameraButton: false,   // default false
+        showTorchButton: false,       // iOS only, default false
+        torchOn: false,               // launch with the flashlight on (default false)
+        resultDisplayDuration: 1500,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
+        beepOnScan: true,             // Play or Suppress beep on scan (default true)
+        openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
+        reportDuplicates: false,
+        continuousScanCallback: function (result) {
 
-        }}
-    );
+            if(debug){
+                //QrCode Scansionato
+                new toasty.Toasty({"text": "\n\nSCANSIONATO!\nContatto il server...\n",
+                    position: toasty.ToastPosition.TOP_RIGHT,
+                    duration: toasty.ToastDuration.SHORT,
+                    yAxisOffset: 100,
+                    backgroundColor:"#AAAA00" }).show();
+            }
+            dialogs.confirm({
+                title: "Conferma Dati Personali",
+                message: "Confermo che la certificazione presentata ha durata di: " + validity[val_index] + "h",
+                okButtonText: "Confermo",
+                cancelButtonText: "Annulla",
+
+            }).then(function (dialog_result){
+                if(dialog_result){
+                    httpModule.request({
+                        url : global.url_general + "Badges/v3/checkGreenPass",
+                        method : "POST",
+                        headers : {
+                            "Content-Type": "application/json",
+                            "Authorization" : "Basic "+ global.encodedStr
+                        },
+                        content : JSON.stringify({
+                            token_GP : result.text,
+                            data : context.data,
+                            id: context.id
+                            //id_tablet : appSettings.getString("id_tab","NA")
+                        })
+                    }).then((response) => {
+                        const result = response.content.toJSON();
+                    });
+                }
+            });
+
+            //console.log(result.text);
+            //console.log(context);
+            httpModule.request({
+                url : global.url_general + "Badges/v3/checkGreenPass",
+                method : "POST",
+                headers : {
+                    "Content-Type": "application/json",
+                    "Authorization" : "Basic "+ global.encodedStr
+                },
+                content : JSON.stringify({
+                    id: context.id,
+                    expiry: validity[val_index],
+                    operator_id: result.text
+                })
+            }).then((response) => {
+                const result = response.content.toJSON();
+
+                //QrCode Scansionato
+                if (debug){
+                    new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n",
+                        position: toasty.ToastPosition.TOP_RIGHT,
+                        duration: toasty.ToastDuration.SHORT,
+                        yAxisOffset: 100,
+                        backgroundColor:"#AAAA00" }).show();
+                }
+
+                if(response.statusCode === 500){
+                    new toasty.Toasty({"text": result.message,
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor: result.color}).show();
+                }
+
+                else {
+                    console.log(result)
+                    new toasty.Toasty({"text": result.message,
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor: result.color}).show();
+                    confirm.play();
+
+                    const nav = {
+                        moduleName: "scan/scan"
+
+                    };
+                    barcodescanner.stop();
+                    frame.Frame.topmost().goBack();
+                    //frame.Frame.topmost().navigate(nav);
+                }
+
+            }, error => {
+                console.error(error);
+            });
+
+        },
+    });
+
+     */
+
 }
 
 exports.onListPickerLoaded = function (fargs) {
@@ -272,18 +382,86 @@ exports.onListPickerLoaded = function (fargs) {
 }
 exports.tap_altro = function () {
     //color="white" backgroundColor="#22384f"
-    let layout = page.getViewById("validity-layout");
+    let layout = page.getViewById("validity-operator");
+    let layout_det = page.getViewById("validity-layout");
     let button = page.getViewById("altro");
+
 
     if(layout.visibility === "visible"){
         layout.visibility = "collapsed";
+        layout_det.visibility = "collapsed";
         button.color = "white";
         button.backgroundColor = "#22384f";
     }
     else{
+        layout_det.visibility = "collapsed";
+        warning.play();
+        // Send API or Notification to an operator ...
         layout.visibility = "visible";
         button.color = "#22384f";
         button.backgroundColor = "white";
     }
 
+}
+
+exports.tap_operatore = function () {
+    barcodescanner.scan({
+        formats: "QR_CODE, EAN_13, CODE_128",
+        cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
+        cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
+        message: 'SCANSIONE QR-CODE OPERATORE\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        //message: "Scan QR",
+        preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
+        showFlipCameraButton: false,   // default false
+        showTorchButton: false,       // iOS only, default false
+        torchOn: false,               // launch with the flashlight on (default false)
+        resultDisplayDuration: 1500,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
+        beepOnScan: true,             // Play or Suppress beep on scan (default true)
+        openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
+        reportDuplicates: false
+
+    }).then(function(result) {
+        httpModule.request({
+            url : global.url_general + "Badges/v3/checkOperator",
+            method : "POST",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : "Basic "+ global.encodedStr
+            },
+            content : JSON.stringify({
+                operator_id: result.text
+            })
+        }).then((response) => {
+            const _result = response.content.toJSON();
+            console.log(_result);
+            console.log(response.statusCode);
+
+            if(response.statusCode === 200){
+                new toasty.Toasty({"text": _result.message,
+                    position: toasty.ToastPosition.CENTER,
+                    duration: toasty.ToastDuration.LONG,
+                    yAxisOffset: 100,
+                    backgroundColor: _result.color}).show();
+
+                let layout = page.getViewById("validity-layout");
+                let old_layout = page.getViewById("validity-operator");
+                old_layout.visibility = "collapsed";
+                layout.visibility = "visible";
+
+                //TODO HERE!
+
+
+            }
+            else{
+                new toasty.Toasty({"text": _result.message,
+                    position: toasty.ToastPosition.CENTER,
+                    duration: toasty.ToastDuration.LONG,
+                    yAxisOffset: 100,
+                    backgroundColor: _result.color}).show();
+            }
+        });
+    },
+        function(error) {
+            console.log("No scan: " + error);
+        });
 }
