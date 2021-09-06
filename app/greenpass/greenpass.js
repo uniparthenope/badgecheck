@@ -3,7 +3,6 @@ let BarcodeScanner = require("nativescript-barcodescanner").BarcodeScanner;
 let barcodescanner = new BarcodeScanner();
 const httpModule = require("tns-core-modules/http");
 const dialogs = require("tns-core-modules/ui/dialogs");
-let toasty = require("nativescript-toasty");
 const frame = require("tns-core-modules/ui/frame");
 let appSettings = require("tns-core-modules/application-settings");
 let sound = require("nativescript-sound");
@@ -23,6 +22,7 @@ let loading;
 
 let base64= require('base-64');
 let utf8 = require('utf8');
+const TIMEOUT = 2000;
 
 function onNavigatingTo(args) {
 
@@ -62,22 +62,24 @@ function scanQR() {
         message: 'SCANSIONE GREEN PASS\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
         //message: "Scan QR",
         preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
-        showFlipCameraButton: false,   // default false
+        showFlipCameraButton: true,   // default false
         showTorchButton: false,       // iOS only, default false
         torchOn: false,               // launch with the flashlight on (default false)
         resultDisplayDuration: 1500,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
         beepOnScan: true,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
         reportDuplicates: false,
-        continuousScanCallback: function (result) {
-
+        continuousScanCallback(result){
             if(debug){
                 //QrCode Scansionato
+                /*
                 new toasty.Toasty({"text": "\n\nSCANSIONATO!\nContatto il server...\n",
                     position: toasty.ToastPosition.TOP_RIGHT,
                     duration: toasty.ToastDuration.SHORT,
                     yAxisOffset: 100,
                     backgroundColor:"#AAAA00" }).show();
+
+                 */
             }
 
             //console.log(result.text);
@@ -100,21 +102,30 @@ function scanQR() {
 
                 //QrCode Scansionato
                 if (debug){
+                    /*
                     new toasty.Toasty({"text": "\n\nCONTROLLATO!\nRisposta server ricevuta...\n",
                         position: toasty.ToastPosition.TOP_RIGHT,
                         duration: toasty.ToastDuration.SHORT,
                         yAxisOffset: 100,
                         backgroundColor:"#AAAA00" }).show();
+
+                     */
                 }
 
                 if(response.statusCode === 500){
+                    warning.play();
+                    show_dialog(result.message, TIMEOUT);
+                    /*
                     new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+
+                     */
                 }
                 else if (response.statusCode === 203){
+                    warning.play();
                     dialogs.confirm({
                         title: "Conferma Dati Personali",
                         message: result.msg,
@@ -141,12 +152,15 @@ function scanQR() {
                             }).then((response) => {
                                 const result = response.content.toJSON();
                                 console.log(result);
+                                /*
+                                                                new toasty.Toasty({"text": result.message,
+                                                                    position: toasty.ToastPosition.CENTER,
+                                                                    duration: toasty.ToastDuration.LONG,
+                                                                    yAxisOffset: 100,
+                                                                    backgroundColor: result.color}).show();
 
-                                new toasty.Toasty({"text": result.message,
-                                    position: toasty.ToastPosition.CENTER,
-                                    duration: toasty.ToastDuration.LONG,
-                                    yAxisOffset: 100,
-                                    backgroundColor: result.color}).show();
+                                 */
+                                show_dialog(result.message, TIMEOUT);
 
                             });
                             frame.Frame.topmost().goBack();
@@ -166,30 +180,26 @@ function scanQR() {
                 }
                 else {
                     console.log(result)
+                    /*
                     new toasty.Toasty({"text": result.message,
                         position: toasty.ToastPosition.CENTER,
                         duration: toasty.ToastDuration.LONG,
                         yAxisOffset: 100,
                         backgroundColor: result.color}).show();
+
+                     */
                     confirm.play();
+                    show_dialog_back(result.message, TIMEOUT);
 
-                    const nav = {
-                        moduleName: "scan/scan"
-
-                    };
-                    barcodescanner.stop();
-                    frame.Frame.topmost().goBack();
-                    //frame.Frame.topmost().navigate(nav);
                 }
 
             }, error => {
                 console.error(error);
             });
+        }
 
-        },
     }).then(function(result) {
-            console.log("Scan format: " + result.format);
-            console.log("Scan text:   " + result.text);
+            console.log("OK");
         },
         function(error) {
             console.log("No scan: " + error);
@@ -257,7 +267,7 @@ exports.tap_cartaceo = function () {
             }).then((response) => {
                 const result = response.content.toJSON();
                 console.log(result);
-
+/*
                 new toasty.Toasty({
                     "text": result.message,
                     position: toasty.ToastPosition.CENTER,
@@ -265,10 +275,19 @@ exports.tap_cartaceo = function () {
                     yAxisOffset: 100,
                     backgroundColor: result.color
                 }).show();
+
+ */
+                dialogs.alert({
+                    message: result.message,
+                    okButtonText: "OK"
+                });
             });
             //loading.visibility="visible";
             frame.Frame.topmost().goBack();
 
+        }
+        else{
+            loading.visibility="collapsed";
         }
     });
     /*
@@ -437,50 +456,77 @@ exports.tap_operatore = function () {
         resultDisplayDuration: 1500,   // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text// Android only, default undefined (sensor-driven orientation), other options: portrait|landscape
         beepOnScan: true,             // Play or Suppress beep on scan (default true)
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
-        reportDuplicates: false
+        reportDuplicates: false,
+        continuousScanCallback(result){
+            httpModule.request({
+                url : global.url_general + "Badges/v3/checkOperator",
+                method : "POST",
+                headers : {
+                    "Content-Type": "application/json",
+                    "Authorization" : "Basic "+ global.encodedStr
+                },
+                content : JSON.stringify({
+                    operator_id: result.text
+                })
+            }).then((response) => {
+                const _result = response.content.toJSON();
+                console.log(_result);
+                console.log(response.statusCode);
+
+                if(response.statusCode === 200){
+                    /*
+                    new toasty.Toasty({"text": _result.message,
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor: _result.color}).show();
+
+                     */
+                    show_dialog(_result.message, TIMEOUT);
+                    let layout = page.getViewById("validity-layout");
+                    let old_layout = page.getViewById("validity-operator");
+                    old_layout.visibility = "collapsed";
+                    layout.visibility = "visible";
+
+
+                }
+                else{
+                    show_dialog(_result.message, TIMEOUT);
+                    /*
+                    new toasty.Toasty({"text": _result.message,
+                        position: toasty.ToastPosition.CENTER,
+                        duration: toasty.ToastDuration.LONG,
+                        yAxisOffset: 100,
+                        backgroundColor: _result.color}).show();
+
+                     */
+                }
+            });
+        }
 
     }).then(function(result) {
-        httpModule.request({
-            url : global.url_general + "Badges/v3/checkOperator",
-            method : "POST",
-            headers : {
-                "Content-Type": "application/json",
-                "Authorization" : "Basic "+ global.encodedStr
-            },
-            content : JSON.stringify({
-                operator_id: result.text
-            })
-        }).then((response) => {
-            const _result = response.content.toJSON();
-            console.log(_result);
-            console.log(response.statusCode);
-
-            if(response.statusCode === 200){
-                new toasty.Toasty({"text": _result.message,
-                    position: toasty.ToastPosition.CENTER,
-                    duration: toasty.ToastDuration.LONG,
-                    yAxisOffset: 100,
-                    backgroundColor: _result.color}).show();
-
-                let layout = page.getViewById("validity-layout");
-                let old_layout = page.getViewById("validity-operator");
-                old_layout.visibility = "collapsed";
-                layout.visibility = "visible";
-
-                //TODO HERE!
-
-
-            }
-            else{
-                new toasty.Toasty({"text": _result.message,
-                    position: toasty.ToastPosition.CENTER,
-                    duration: toasty.ToastDuration.LONG,
-                    yAxisOffset: 100,
-                    backgroundColor: _result.color}).show();
-            }
-        });
+        console.log("OK");
     },
         function(error) {
             console.log("No scan: " + error);
         });
+}
+
+function show_dialog(message, timeout){
+    dialogs.alert({
+        message: message,
+    });
+    setTimeout(() =>{
+        barcodescanner.stop();
+    },timeout);
+}
+
+function show_dialog_back(message, timeout){
+    dialogs.alert({
+        message: message,
+    });
+    setTimeout(() =>{
+        barcodescanner.stop();
+        frame.Frame.topmost().goBack();
+    },timeout);
 }

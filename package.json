@@ -5,7 +5,7 @@
       "version": "6.3.0"
     },
     "tns-android": {
-      "version": "6.3.1"
+      "version": "6.5.3"
     }
   },
   "description": "NativeScript Application",
@@ -18,13 +18,12 @@
     "nativescript-appversion": "^1.4.4",
     "nativescript-audio-player": "^1.0.3",
     "nativescript-barcodescanner": "^3.4.2",
+    "nativescript-eventify": "^1.0.1",
     "nativescript-sound": "^1.0.4",
     "nativescript-sound-kak": "^1.2.0",
     "nativescript-statusbar": "^5.0.0",
     "nativescript-store-update": "^1.0.2",
-    "nativescript-toast": "^2.0.0",
     "nativescript-toasts": "^1.0.3",
-    "nativescript-toasty": "^3.0.0-alpha.2",
     "tns-core-modules": "~6.3.0",
     "utf8": "^3.0.0"
   },

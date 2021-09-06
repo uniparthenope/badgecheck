@@ -1,6 +1,5 @@
 const observableModule = require("tns-core-modules/data/observable");
 const frame = require("tns-core-modules/ui/frame");
-let toasty = require("nativescript-toasty");
 let appSettings = require("tns-core-modules/application-settings");
 const dialogs = require("tns-core-modules/ui/dialogs");
 let appversion = require("nativescript-appversion");

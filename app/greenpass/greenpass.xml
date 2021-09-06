@@ -24,9 +24,9 @@
 
             </StackLayout>
 
-            <StackLayout id="validity-layout" margin="0 10 10 10"  width="70%" borderColor="black" borderWidth="2" borderRadius="5" visibility="collapsed">
-                <Label text="Tipo di certificazione:" fontSize="16" horizontalAlignment="center" color="red"/>
-                <ListPicker id="validity-listview" items="{{ validity }}" selectedIndex="0" loaded="onListPickerLoaded"/>
+            <StackLayout id="validity-layout" margin="0 10 10 10"  width="70%" borderColor="white" borderWidth="2" borderRadius="5" visibility="collapsed">
+                <Label text="Selezionare tipo di certificazione:" fontSize="16" horizontalAlignment="center" color="white"/>
+                <ListPicker id="validity-listview" items="{{ validity }}" selectedIndex="0" loaded="onListPickerLoaded" color="white" borderColor="white" width="80%" fontSize="20"/>
                 <Button ontap="tap_cartaceo" width="70%" verticalAlignment="bottom" text="Invia" marginBottom="15" color="white" backgroundColor="#22384f"/>
 
             </StackLayout>
