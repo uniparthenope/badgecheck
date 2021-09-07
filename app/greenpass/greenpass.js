@@ -59,7 +59,7 @@ function scanQR() {
         formats: "QR_CODE, EAN_13, CODE_128",
         cancelLabel: "EXIT. Also, try the volume buttons!", // iOS only, default 'Close'
         cancelLabelBackgroundColor: "#333333", // iOS only, default '#000000' (black)
-        message: 'SCANSIONE GREEN PASS\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
+        message: 'SCANSIONE CERTIFICAZIONE VERDE COVID-19\n\nUniversità degli Studi di Napoli "Parthenope"', // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.'
         //message: "Scan QR",
         preferFrontCamera: appSettings.getBoolean("front_camera",true),     // Android only, default false
         showFlipCameraButton: true,   // default false
