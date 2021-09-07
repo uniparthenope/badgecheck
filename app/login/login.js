@@ -116,6 +116,7 @@ exports.onNavigatingTo = onNavigatingTo;
 
 function autoconnect(){
     let loading = page.getViewById("activityIndicator");
+    loading.visibility = "visible";
     global.encodedStr = appSettings.getString("token","");
     if(global.encodedStr !== ""){
         httpModule.request({

@@ -17,11 +17,15 @@ function onNavigatingTo(args) {
     });
 
     if (appSettings.getString("id_tab") === undefined){
-        dialogs.confirm({
+        dialogs.alert({
             title: "Attenzione",
             message: "ID-Tablet non è stato ancora impostato!",
             okButtonText: "OK"
-        }).then(function (result) {
+        }).then(function () {
+            const nav = {
+                moduleName: "settings/settings"
+            };
+            frame.Frame.topmost().navigate(nav);
         });
     }
     else
