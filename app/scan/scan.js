@@ -111,11 +111,11 @@ function scanQR() {
                 }
                 else if(response.statusCode === 502){
                     /*
-                    new toasty.Toasty({"text": result.message,
-                        position: toasty.ToastPosition.CENTER,
-                        duration: toasty.ToastDuration.LONG,
-                        yAxisOffset: 100,
-                        backgroundColor: result.color}).show();
+                    new toasty.Toasty({"text": result.message}).show();
+                        //position: toasty.ToastPosition.CENTER,
+                        //duration: toasty.ToastDuration.LONG,
+                        //yAxisOffset: 100,
+                        //backgroundColor: result.color}).show();
 
                      */
                     show_dialog_gp(result.message, TIMEOUT, result);

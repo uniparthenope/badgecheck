@@ -3,7 +3,7 @@
         xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar>
-        <Label text="Green Pass Page"/>
+        <Label text="Certificazione Verde COVID-19 Page"/>
     </ActionBar>
 
     <GridLayout >
@@ -13,10 +13,10 @@
         <StackLayout width="70%" horizontalAlignment="center" verticalAlignment="center" backgroundColor="rgba(34,56,79,0.5)" height="60%">
             <Label text="ATTENZIONE" fontSize="36" horizontalAlignment="center" color="red" textWrap="true" marginBottom="5" textAlignment="center"/>
 
-            <Label text="GREENPASS MANCANTE" fontSize="36" horizontalAlignment="center" color="red" textWrap="true" marginBottom="90" textAlignment="center"/>
+            <Label text="CERTIFICAZIONE VERDE COVID-19 MANCANTE" fontSize="36" horizontalAlignment="center" color="red" textWrap="true" marginBottom="90" textAlignment="center"/>
 
 
-            <Button ontap="tap_scanGP" id="scan" width="70%" verticalAlignment="bottom" text="Scan Green Pass QR" marginBottom="45" color="#22384f" backgroundColor="white"/>
+            <Button ontap="tap_scanGP" id="scan" width="70%" verticalAlignment="bottom" text="Mostra Certificazione Verde COVID-19" marginBottom="45" color="#22384f" backgroundColor="white"/>
             <Button ontap="tap_altro" id="altro" width="70%" verticalAlignment="bottom" text="Altra Certificazione - Richiedi assistenza Operatore"  color="white" backgroundColor="purple"/>
             <StackLayout id="validity-operator" margin="0 10 10 10"  width="70%" borderColor="red" borderWidth="2" borderRadius="5" visibility="collapsed">
                 <Label text="Attendere l'arrivo di un operatore!!" fontSize="16" horizontalAlignment="center" color="red"/>
